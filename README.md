@@ -2,9 +2,13 @@
 
 A quick look at the new Kubernetes Gateway API that was recently announced.
 
-https://gateway-api.sigs.k8s.io/
-https://gateway-api.sigs.k8s.io/guides/simple-gateway/
-https://github.com/nginxinc/nginx-gateway-fabric/blob/main/examples/cafe-example/gateway.yaml
+Official docs:
+- [https://gateway-api.sigs.k8s.io/](https://gateway-api.sigs.k8s.io/)
+- [https://gateway-api.sigs.k8s.io/guides/simple-gateway/](https://gateway-api.sigs.k8s.io/guides/simple-gateway/)
+
+NGINX Gateway Fabric:
+- [https://github.com/nginxinc/nginx-gateway-fabric](https://github.com/nginxinc/nginx-gateway-fabric)
+- [https://github.com/nginxinc/nginx-gateway-fabric/blob/main/examples/cafe-example/gateway.yaml](https://github.com/nginxinc/nginx-gateway-fabric/blob/main/examples/cafe-example/README.md)
 
 ## Basic Example
 
@@ -51,7 +55,7 @@ apiVersion: v1
 kind: Service
 metadata:
   namespace: web
-  name: demo-website
+  name: svc-demo-website
   labels:
     app: demo-website
 spec:
@@ -101,7 +105,7 @@ kubectl apply -f https://raw.githubusercontent.com/nginxinc/nginx-gateway-fabric
 
 Check port number used by NodePort service.  Should be called `nginx-gateway` in the `nginx-gateway` namespace.
 
-Create Gateway:
+Create Gateway to accept HTTP traffic:
 
 ```bash
 cat <<EOF | kubectl apply -f -
@@ -122,7 +126,7 @@ spec:
 EOF
 ```
 
-Create HTTPRoute:
+Create HTTPRoute to route to service load balancing sample website pods:
 
 ```bash
 cat <<EOF | kubectl apply -f -
@@ -136,9 +140,11 @@ spec:
   - name: gateway-web
   rules:
   - backendRefs:
-    - name: demo-website
+    - name: svc-demo-website
       port: 8080
 EOF
 ```
 
 Sample website should now be accessible outside the cluster using HTTP port used in the `nginx-gateway` service.
+
+For more advanced examples see [https://gateway-api.sigs.k8s.io/guides/](https://gateway-api.sigs.k8s.io/guides/).
